@@ -1,1 +1,640 @@
-<h1>載入中...</h1>
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>昱揚工程 | 專屬報價單</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
+    
+    body { font-family: 'Noto Sans TC', sans-serif; background-color: #eef2f6; margin: 0; padding: 20px 15px; color: #1e293b; font-size: 17px; }
+    .container { max-width: 1200px; width: 95%; margin: 0 auto; background: white; padding: 50px 40px; border-radius: 16px; position: relative; box-shadow: 0 15px 40px rgba(0,0,0,0.08); }
+    
+    .header { text-align: center; margin-bottom: 40px; border-bottom: 3px solid #f1f5f9; padding-bottom: 25px; }
+    .company-name { font-size: clamp(1.8em, 5vw, 2.8em); font-weight: 900; color: #001529; margin: 0; letter-spacing: 3px; }
+    .quote-title { font-size: 1.4em; color: #64748b; margin-top: 12px; font-weight: 900; letter-spacing: 8px; }
+    
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 40px; }
+    .info-box.client-box { border: 2px solid #bae6fd; background-color: #f0f9ff; }
+    .info-box.company-box { border: 2px solid #fde68a; background-color: #fffbeb; }
+    .info-box { padding: 25px; border-radius: 12px; }
+    
+    .info-item { margin-bottom: 15px; font-size: 1.1em; display: flex; align-items: flex-end; }
+    .info-item b { color: #475569; font-weight: 900; white-space: nowrap; flex-shrink: 0; margin-right: 10px; }
+    .info-item span { font-weight: bold; color: #0f172a; border-bottom: 1px solid #cbd5e1; padding-bottom: 2px; flex-grow: 1; min-height: 1.2em; word-break: break-all; }
+    
+    .section-title { font-size: 1.5em; font-weight: 900; border-left: 8px solid #ffc107; padding-left: 15px; margin: 40px 0 20px 0; color: #0f172a; }
+    
+    table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    th { background: #001529; color: white; padding: 15px; font-size: 1.1em; letter-spacing: 1px; }
+    td { padding: 18px 15px; border-bottom: 2px solid #f1f5f9; vertical-align: middle; }
+    
+    .method-container-wrapper { background: #f8fafc; border-radius: 10px; padding: 20px; margin: 10px 0; border: 1px dashed #cbd5e1; }
+    .method-title { font-weight: 900; color: #0f172a; font-size: 1.1em; margin-bottom: 15px; }
+    .method-grid-box { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; counter-reset: method-counter; }
+    
+    .method-card { background: white; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px; font-weight: bold; color: #1e293b; font-size: 1em; box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; align-items: center; line-height: 1.4; }
+    .method-card::before { counter-increment: method-counter; content: counter(method-counter) " | "; color: #3b82f6; font-weight: 900; margin-right: 8px; font-size: 1.1em; }
+
+    /* 總計區塊 */
+    .total-box { text-align: right; padding: 25px; background: #f0f9ff; border: 3px dashed #bae6fd; margin-top: 30px; font-size: 1.5em; border-radius: 12px; color: #0369a1; }
+    
+    /* 優惠顯示區塊樣式 */
+    .discount-detail-area { margin-top: 15px; padding-top: 15px; border-top: 2px dashed #bae6fd; }
+    .discount-line { color: #dc2626; font-size: 0.9em; margin-bottom: 10px; font-weight: 900; display: flex; justify-content: flex-end; gap: 15px;}
+    .final-line { color: #0284c7; font-size: 1.1em; font-weight: 900; margin-top: 15px; }
+
+    .remarks-box { background: #f0fdf4; border: 2px solid #86efac; border-radius: 12px; padding: 25px 35px; margin-top: 20px; font-size: 1.1em; color: #166534; line-height: 1.8; }
+    .remark-list { margin: 0; padding-left: 25px; font-weight: bold; }
+    .remark-list li { margin-bottom: 10px; }
+    
+    .photo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; counter-reset: photo-counter; }
+    .photo-card { position: relative; border: 2px solid #cbd5e1; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; background: #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.05); padding: 15px; }
+    .photo-card::before { counter-increment: photo-counter; content: "照片 " counter(photo-counter); position: absolute; top: 15px; left: 15px; background: #3b82f6; color: #fff; padding: 6px 12px; border-radius: 6px; font-weight: 900; font-size: 0.9em; z-index: 10; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+    .photo-card img { width: 100%; height: 350px; object-fit: contain; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1; }
+    .photo-desc { margin-top: 15px; padding: 15px; font-size: 1.1em; font-weight: 900; color: #1e293b; text-align: center; background: #f1f5f9; border-radius: 8px; }
+
+    .album-container { margin-top: 35px; text-align: center; }
+    .album-btn { display: inline-block; background: #001529; color: #ffc107; text-decoration: none; padding: 20px 35px; border-radius: 12px; font-weight: 900; font-size: 1.3em; letter-spacing: 2px; box-shadow: 0 5px 20px rgba(0,21,41,0.2); transition: 0.3s; }
+    .album-btn:hover { background: #002244; transform: translateY(-3px); }
+
+    /* 簽名區 */
+    .sig-area { margin-top: 50px; border-top: 3px solid #e2e8f0; padding-top: 30px; }
+    #sigStartBtn { width: 100%; padding: 25px; background: #001529; color: #ffc107; border: none; border-radius: 12px; font-size: 1.4em; font-weight: 900; cursor: pointer; transition: 0.3s; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+    #sigStartBtn:hover { background: #002244; transform: translateY(-2px); }
+    #sigInputBlock { display: none; margin-top: 20px; background: #fff; padding: 30px; border: 2px solid #cbd5e1; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+    .sig-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: end; }
+    .sig-canvas-box { border: 3px dashed #cbd5e1; height: 200px; position: relative; background: #f8fafc; border-radius: 12px; display: flex; align-items: center; justify-content: center; overflow: hidden; touch-action: none; }
+    
+    .keyboard-input-box { display: none; margin-top: 15px; }
+    .sig-text-input { width: 100%; padding: 20px; border: 3px solid #001529; border-radius: 12px; font-size: 1.8em; text-align: center; font-weight: 900; box-sizing: border-box; background: #f8fafc; }
+    .toggle-sig-btn { display: inline-block; background: #f1f5f9; border: 2px solid #cbd5e1; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-size: 1.1em; font-weight: 900; color: #001529; margin-bottom: 15px; transition: 0.2s; }
+    .toggle-sig-btn:hover { background: #e2e8f0; }
+    
+    .sig-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 25px; }
+    .btn-cancel { background: #94a3b8; color: white; border: none; border-radius: 10px; padding: 20px; font-weight: 900; font-size: 1.2em; cursor: pointer; }
+    .btn-submit { background: #059669; color: white; border: none; border-radius: 10px; padding: 20px; font-weight: 900; font-size: 1.2em; cursor: pointer; box-shadow: 0 5px 15px rgba(5,150,105,0.3); }
+    
+    .btn-print-bottom { background: #f8fafc; color: #475569; border: 2px solid #cbd5e1; padding: 15px 40px; border-radius: 10px; font-weight: 900; font-size: 1.2em; cursor: pointer; margin-top: 40px; transition: 0.2s; display: block; margin-left: auto; margin-right: auto;}
+    .btn-print-bottom:hover { background: #e2e8f0; }
+    
+    #customAlertOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; justify-content: center; align-items: center; }
+    .custom-alert-box { background: white; padding: 40px; border-radius: 16px; text-align: center; max-width: 400px; box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
+
+    .portfolio-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 40px; }
+    .portfolio-card { border: 2px solid #e2e8f0; border-radius: 10px; overflow: hidden; background: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
+    .portfolio-card img { width: 100%; height: 200px; object-fit: cover; display: block; border-bottom: 2px solid #f1f5f9; }
+    .portfolio-card .desc { padding: 15px; font-size: 1.1em; font-weight: 900; color: #334155; text-align: center; background: #f8fafc; }
+
+    /* 三欄式行銷卡片區塊 */
+    .marketing-cards-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 25px;
+      margin-top: 60px;
+      padding-top: 50px;
+      border-top: 3px dashed #e2e8f0;
+    }
+    
+    .mkt-card {
+      background: #ffffff;
+      border: 1px solid #f1f5f9;
+      border-radius: 16px;
+      padding: 35px 25px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .mkt-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+    
+    .mkt-title { font-size: 1.6em; font-weight: 900; margin-bottom: 20px; letter-spacing: 1px; }
+    .mkt-desc { font-size: 1.05em; color: #64748b; line-height: 1.7; margin-bottom: 35px; flex-grow: 1; font-weight: bold; }
+    
+    .mkt-btn {
+      display: block;
+      padding: 16px;
+      border-radius: 50px;
+      color: #ffffff;
+      font-weight: 900;
+      text-decoration: none;
+      font-size: 1.15em;
+      transition: filter 0.2s;
+      letter-spacing: 1px;
+    }
+    .mkt-btn:hover { filter: brightness(1.15); }
+
+    .mkt-ninja .mkt-title { color: #9333ea; }
+    .mkt-ninja .mkt-btn { background-color: #9333ea; }
+    
+    .mkt-water .mkt-title { color: #e11d48; }
+    .mkt-water .mkt-btn { background-color: #e11d48; }
+    
+    .mkt-course .mkt-title { color: #0ea5e9; }
+    .mkt-course .mkt-btn { background-color: #0ea5e9; }
+
+    /* 手機版排版調整 */
+    @media (max-width: 992px) { 
+      .marketing-cards-container { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) { 
+      .info-grid, .photo-grid, .sig-layout, .portfolio-grid, .marketing-cards-container { grid-template-columns: 1fr; } 
+      .method-grid-box { grid-template-columns: repeat(2, 1fr); } 
+      .container { padding: 30px 15px; } 
+      thead { display: none; } 
+      tr { display: block; border-bottom: 3px solid #e2e8f0; margin-bottom: 15px; padding-bottom: 15px; }
+      td { display: block; text-align: right; padding: 10px 5px; border-bottom: 1px dashed #f1f5f9; }
+      td::before { content: attr(data-label); float: left; font-weight: 900; color: #64748b; }
+      .method-container-wrapper { margin-top: 15px; }
+      .discount-line { flex-direction: column; align-items: flex-end; gap: 5px; }
+    }
+
+    @media print { 
+      body { background-color: #fff !important; }
+      .container { box-shadow: none; padding: 0; border: none; }
+      .info-box { border: 1px solid #ccc !important; background-color: #fff !important; }
+      .btn-print-bottom, #sigStartBtn, .sig-actions, #clearBtn, #sigInputBlock, #customAlertOverlay, .toggle-sig-btn, .album-btn, .marketing-cards-container { display: none !important; } 
+    }
+  </style>
+</head>
+<body>
+<div id="customAlertOverlay">
+  <div class="custom-alert-box">
+    <div id="customAlertIcon" style="font-size:4em;">✅</div>
+    <div id="customAlertMsg" style="font-weight:900; font-size:1.2em; margin:20px 0; line-height: 1.6; white-space: pre-wrap; color:#1e293b;"></div>
+    <button onclick="closeCustomAlert()" style="background:#001529; color:#ffc107; padding:15px 30px; border-radius:10px; border:none; cursor:pointer; width: 100%; font-weight: 900; font-size:1.1em;">我知道了</button>
+  </div>
+</div>
+
+<div class="container" id="main">
+  <div id="loading" style="text-align:center; padding:80px; font-size:1.5em; font-weight:bold; color:#64748b;">👷‍♂️ 安全連線調閱資料中...</div>
+  <div id="content" style="display:none;">
+    
+    <div class="header">
+      <h1 class="company-name">昱揚工程有限公司</h1>
+      <div class="quote-title">專 屬 報 價 單</div>
+    </div>
+    
+    <div class="info-grid">
+      <div class="info-box client-box">
+        <div class="info-item"><b>報價對象：</b><span id="q-n"></span></div>
+        <div class="info-item"><b>聯繫電話：</b><span id="q-p"></span></div>
+        <div class="info-item"><b>工程名稱：</b><span id="q-j"></span></div>
+        <div class="info-item" style="margin-bottom:0;"><b>案場地點：</b><span id="q-a"></span></div>
+      </div>
+      <div class="info-box company-box">
+        <div class="info-item"><b>報價單號：</b><span id="q-i"></span></div>
+        <div class="info-item"><b>報價日期：</b><span id="q-d"></span></div>
+        <div style="border-top:2px dashed #fcd34d; padding-top:15px; margin-top:15px; line-height:1.8; font-weight:bold; color:#1e293b; font-size:1em;">
+          公司：02-2277-7602<br>
+          行動：0928-525-887<br>
+          Email：jacky670901@gmail.com<br>
+          <span style="color:#0f172a;">地址：新北市新莊區後港一路173號3F-3</span><br>
+          <span style="color:#b45309;">報價業務：洪健智</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="section-title">施工項目與費用明細</div>
+    <table>
+      <thead>
+        <tr>
+          <th width="35%" style="text-align:left; border-top-left-radius: 8px;">項目名稱</th>
+          <th width="15%" style="text-align:center;">數量</th>
+          <th width="15%" style="text-align:center;">單位</th>
+          <th width="15%" style="text-align:right;">單價</th>
+          <th width="20%" style="text-align:right; border-top-right-radius: 8px;">小計</th>
+        </tr>
+      </thead>
+      <tbody id="q-items"></tbody>
+    </table>
+    
+    <!-- 總計區塊 -->
+    <div id="q-total-section">
+      <div class="total-box">
+        <div><b id="q-total-label">總計 (未稅)：</b><span id="q-total" style="font-weight:900; font-size:1.4em;"></span> 元</div>
+        
+        <div id="q-discount-area" class="discount-detail-area" style="display:none;">
+          <div id="q-discount-list"></div>
+          <div class="final-line">
+            <b>優惠後總額 (未稅)：</b><span id="q-final-total" style="font-size:1.45em;"></span> 元
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="section-title">現場場勘照片</div>
+    <div class="photo-grid" id="q-photos"></div>
+    
+    <div id="q-album-container" class="album-container" style="display:none;">
+      <a id="q-album-link" href="#" target="_blank" class="album-btn">📸 點此查看完整施工紀錄相簿</a>
+    </div>
+
+    <div id="remarksSection" style="display:none;">
+      <div class="section-title">備註與條款</div>
+      <div class="remarks-box">
+        <ol class="remark-list" id="q-remarks"></ol>
+      </div>
+    </div>
+
+    <div class="sig-area">
+      <button id="sigStartBtn" onclick="openPad()">✍️ 客戶確認簽章 (點擊開始)</button>
+      
+      <div id="sigInputBlock">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+          <div style="font-weight:900; color: #001529; font-size:1.2em;">請確認簽名：</div>
+          <div class="toggle-sig-btn" onclick="toggleSigMode()" id="modeBtn">⌨️ 改用鍵盤輸入</div>
+        </div>
+        
+        <div class="sig-canvas-box" id="sigB">
+          <canvas id="pad" style="width:100%; height:100%;"></canvas>
+          <button style="position:absolute; top:10px; right:10px; background:#64748b; color:white; border-radius:6px; border:none; padding:8px 15px; font-size:0.9em; font-weight:bold; cursor:pointer;" onclick="clearCanvas()">✕ 清除重寫</button>
+        </div>
+        
+        <div class="keyboard-input-box" id="keyB">
+          <input type="text" id="keyInput" class="sig-text-input" placeholder="請在此輸入您的姓名">
+        </div>
+        
+        <div class="sig-actions">
+          <button class="btn-cancel" onclick="hidePad()">返回取消</button>
+          <button id="sendBtn" class="btn-submit" onclick="submitSig()">確認送出簽名</button>
+        </div>
+        <div style="text-align:right; margin-top: 25px; color:#475569;"><b>報價單位：昱揚工程有限公司</b></div>
+      </div>
+      
+      <div id="signedBlock" style="display:none;">
+        <div id="signedLockMsg" style="text-align:center; padding:20px; background:#ecfdf5; color:#166534; border:2px solid #a7f3d0; border-radius:12px; font-weight:900; font-size:1.2em; margin-bottom:25px;">✅ 本報價單已由客戶簽署確認</div>
+        <div class="sig-layout">
+          <div class="sig-canvas-box" id="finalSig"></div>
+          <div style="text-align:right; align-self:flex-end; color:#0f172a; font-size:1.1em;"><b>報價單位：昱揚工程有限公司</b><br>報價業務：洪健智</div>
+        </div>
+      </div>
+    </div>
+    
+    <div id="q-portfolio-section" style="display:none; margin-top: 50px; padding-top: 30px; border-top: 3px solid #e2e8f0;">
+      <div class="section-title" style="margin-top: 0;">相關工程實績參考</div>
+      <div class="portfolio-grid" id="q-portfolios"></div>
+    </div>
+
+    <!-- 三欄式精美圖文行銷卡片區 -->
+    <div class="marketing-cards-container">
+      
+      <div class="mkt-card mkt-ninja">
+        <div class="mkt-title">AI 忍者</div>
+        <div class="mkt-desc">精準定位、快速掃描。用於輔助抓漏與隱藏管線的極速視覺辨識系統。</div>
+        <a href="https://jacky990394.github.io/ai-ninja/" target="_blank" class="mkt-btn">啟動 AI 忍者</a>
+      </div>
+
+      <div class="mkt-card mkt-water">
+        <div class="mkt-title">牆面水分子成像</div>
+        <div class="mkt-desc">將含水率數據視覺化為多色熱圖，科學化呈現漏水熱區，取代自由心證。</div>
+        <a href="https://jacky990394.github.io/water-image-system/" target="_blank" class="mkt-btn">進入成像系統</a>
+      </div>
+
+      <div class="mkt-card mkt-course">
+        <div class="mkt-title">居家漏水實務課</div>
+        <div class="mkt-desc">從認識漏水原因開始，學習高CP值修繕工法與高壓灌注實機操作。一起降低修繕門檻，培養您的第二專長！</div>
+        <a href="https://xzcycedm.wixsite.com/xinzhuang" target="_blank" class="mkt-btn">新莊救國團報名連結</a>
+      </div>
+
+    </div>
+
+    <div style="text-align: center; margin-top: 40px;">
+      <button class="btn-print-bottom" onclick="printDoc()">📄 儲存為 PDF 或 列印</button>
+    </div>
+  </div>
+</div>
+<script>
+  // ⚠️ 請將下方單引號內的文字，替換成您 GAS 部署的「網頁應用程式網址」（結尾為 /exec）
+  const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbyjECquh2SvafoebXTePS1y06e1mwlVh6u1AfAqGZfSxr0f7JBVnryO8-CGzvQ47iRJBw/exec';
+
+  function getQueryParam(name) {
+    var match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
+    return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+  }
+
+  const quoteId = getQueryParam('id') || '';
+  let reloadAfterAlert = false;
+  let customAlertCallback = null;
+  let sigMode = 'draw';
+  let hasDrawn = false;
+  
+  function alertMe(m, t, callback) { 
+    document.getElementById('customAlertMsg').innerText = m; 
+    document.getElementById('customAlertIcon').innerText = t === 'success' ? '✅' : '💡'; 
+    document.getElementById('customAlertOverlay').style.display = 'flex'; 
+    customAlertCallback = callback || null;
+  }
+  
+  function closeCustomAlert() { 
+    document.getElementById('customAlertOverlay').style.display = 'none'; 
+    if(reloadAfterAlert) { location.reload(); } 
+    else if (customAlertCallback) { customAlertCallback(); customAlertCallback = null; }
+  }
+  
+  function printDoc() { 
+    var ua = navigator.userAgent; 
+    if (/android|ipad|iphone|ipod/i.test(ua.toLowerCase())) { 
+      alertMe("請點擊手機瀏覽器底部的「分享 🔗」按鈕，並選擇「列印」或「儲存為 PDF」！", "info");
+    } else { window.print(); } 
+  }
+
+  // 透過 API 讀取報價單資料
+  window.onload = function() {
+    if (!quoteId) {
+      document.getElementById('loading').innerText = "⚠️ 找不到報價單編號，請確認連結是否完整。";
+      return;
+    }
+    fetch(GAS_API_URL + '?action=getQuote&id=' + encodeURIComponent(quoteId))
+      .then(function(response) { return response.json(); })
+      .then(function(data) {
+        if (!data || data.error) {
+          document.getElementById('loading').innerText = "⚠️ 查無此報價單資料，請聯繫昱揚工程確認。";
+          return;
+        }
+        render(data);
+      })
+      .catch(function(err) {
+        document.getElementById('loading').innerText = "⚠️ 連線調閱失敗，請重新整理網頁再試一次。";
+      });
+  };
+  
+  function render(d) {
+    if(!d) return; 
+    document.getElementById('q-i').innerText = d.id; 
+    document.getElementById('q-d').innerText = d.date; 
+    document.getElementById('q-n').innerText = d.customerName || "未填寫"; 
+    document.getElementById('q-p').innerText = d.phone || "未填寫";
+    document.getElementById('q-j').innerText = d.projectName || "未命名"; 
+    document.getElementById('q-a').innerText = d.address || "未填寫"; 
+    document.getElementById('q-total').innerText = Number(d.totalPrice).toLocaleString();
+    
+    if (!d.totalPrice || d.totalPrice === "0" || d.totalPrice === 0) {
+      document.getElementById('q-total-section').style.display = 'none';
+    } else {
+      document.getElementById('q-total-section').style.display = 'block';
+    }
+
+    // 智慧判斷多筆優惠項目
+    var discArr = [];
+    try { 
+      var tmpDisc = JSON.parse(d.discountJSON || '[]'); 
+      if(Array.isArray(tmpDisc)) discArr = tmpDisc;
+      else if (tmpDisc.amount !== undefined) discArr = [tmpDisc];
+    } catch(e){}
+    
+    var totalDiscAmt = 0;
+    var listHtml = "";
+    
+    for(var ds=0; ds<discArr.length; ds++) {
+       var curA = parseFloat(discArr[ds].amount) || 0;
+       if(curA > 0) {
+          totalDiscAmt += curA;
+          var curDesc = discArr[ds].desc || "專案優惠折抵";
+          listHtml += '<div class="discount-line"><span>優惠項目 (' + curDesc + ')：</span><span> - ' + Number(curA).toLocaleString() + ' 元</span></div>';
+       }
+    }
+    
+    if (totalDiscAmt > 0) {
+      document.getElementById('q-total-label').innerText = "原報價總額 (未稅)：";
+      document.getElementById('q-discount-list').innerHTML = listHtml;
+      var finalP = (d.finalPrice !== undefined && d.finalPrice !== "") ? Number(d.finalPrice) : (Number(d.totalPrice) - totalDiscAmt);
+      document.getElementById('q-final-total').innerText = Number(finalP).toLocaleString();
+      document.getElementById('q-discount-area').style.display = 'block';
+    } else {
+      document.getElementById('q-total-label').innerText = "總計 (未稅)：";
+      document.getElementById('q-discount-area').style.display = 'none';
+    }
+
+    var ih = '';
+    var itemsArray = [];
+    try { itemsArray = JSON.parse(d.itemsJSON || '[]'); } catch(e){}
+
+    for(var x=0; x<itemsArray.length; x++) {
+      var i = itemsArray[x];
+      var ms = i.method ? i.method.split('/').map(function(s){return s.trim();}).filter(function(s){return s!=="";}) : [];
+      var borderStyle = ms.length > 0 ? "border-bottom:none;" : "";
+      
+      ih += '<tr>' +
+              '<td data-label="項目名稱：" style="font-weight:900; color:#0f172a; font-size:1.1em; ' + borderStyle + '">' + (i.name||'-') + '</td>' +
+              '<td data-label="數量：" align="center" style="font-weight:bold; font-size:1.1em; ' + borderStyle + '">' + (i.qty || '-') + '</td>' +
+              '<td data-label="單位：" align="center" style="font-weight:bold; font-size:1.1em; ' + borderStyle + '">' + (i.unit || '-') + '</td>' +
+              '<td data-label="單價：" align="right" style="font-weight:bold; font-size:1.1em; ' + borderStyle + '">$' + Number(i.unitPrice||0).toLocaleString() + '</td>' +
+              '<td data-label="小計：" align="right" style="font-weight:900; color:#b91c1c; font-size:1.2em; ' + borderStyle + '">$' + Number(i.price||0).toLocaleString() + '</td>' +
+             '</tr>';
+             
+      if (ms.length > 0) {
+        var msCards = "";
+        for(var y=0; y<ms.length; y++) {
+          msCards += '<div class="method-card">' + ms[y] + '</div>';
+        }
+        ih += '<tr>' +
+                '<td colspan="5" style="border-top:none; padding: 0 15px 20px 15px;">' +
+                  '<div class="method-container-wrapper">' +
+                    '<div class="method-title">🔹 詳細工法：</div>' +
+                    '<div class="method-grid-box">' + msCards + '</div>' +
+                  '</div>' +
+                '</td>' +
+               '</tr>';
+      }
+    }
+    document.getElementById('q-items').innerHTML = ih;
+    
+    var portfoliosHtml = '';
+    var portfoliosArray = [];
+    try { portfoliosArray = JSON.parse(d.portfolioJSON || '[]'); } catch(e){}
+    
+    if (portfoliosArray.length > 0) {
+      for(var pIdx=0; pIdx<portfoliosArray.length; pIdx++) {
+        var p = portfoliosArray[pIdx];
+        var thumbUrl = p.url;
+        if (p.url.indexOf("/file/d/") !== -1) {
+           var idPart = p.url.split("/file/d/")[1].split("/")[0];
+           thumbUrl = "https://drive.google.com/thumbnail?id=" + idPart + "&sz=w600";
+        }
+        
+        portfoliosHtml += '<div class="portfolio-card">' +
+                            '<img src="' + thumbUrl + '">' +
+                            '<div class="desc">' + p.desc + '</div>' +
+                          '</div>';
+      }
+      document.getElementById('q-portfolios').innerHTML = portfoliosHtml;
+      document.getElementById('q-portfolio-section').style.display = 'block';
+    } else {
+      document.getElementById('q-portfolio-section').style.display = 'none';
+    }
+
+    var ph = '';
+    var photosArray = [];
+    try { photosArray = JSON.parse(d.photosJSON || '[]'); } catch(e){}
+    
+    for(var k=0; k<photosArray.length; k++) {
+      var pPhoto = photosArray[k];
+      if(pPhoto.url && pPhoto.url !== "無照片") { 
+        var fid = pPhoto.url.match(/id=([^&]+)/) ? pPhoto.url.match(/id=([^&]+)/)[1] : pPhoto.url.split("/d/")[1].split("/")[0]; 
+        ph += '<div class="photo-card">' +
+                '<img src="https://drive.google.com/thumbnail?id=' + fid + '&sz=w800">' +
+                '<div class="photo-desc">' + (pPhoto.description || "現場紀錄") + '</div>' +
+              '</div>'; 
+      } 
+    }
+    
+    if(ph !== '') {
+      document.getElementById('q-photos').innerHTML = ph;
+    } else {
+      document.getElementById('q-photos').innerHTML = '<div style="grid-column: 1/-1; text-align:center; color:#94a3b8; font-weight:bold;">未提供場勘照片</div>';
+    }
+
+    if (d.albumLink && d.albumLink.trim() !== "") {
+      document.getElementById('q-album-link').href = d.albumLink;
+      document.getElementById('q-album-container').style.display = 'block';
+    }
+
+    try {
+      var rms = JSON.parse(d.remarksJSON || '[]');
+      if (rms.length > 0) {
+        var rmsHtml = "";
+        for(var r=0; r<rms.length; r++) { rmsHtml += '<li>' + rms[r] + '</li>'; }
+        document.getElementById('q-remarks').innerHTML = rmsHtml;
+        document.getElementById('remarksSection').style.display = 'block';
+      }
+    } catch(e) {}
+    
+    if (d.sigStatus && (d.sigStatus.indexOf("http") !== -1 || d.sigStatus !== "待簽署")) { 
+      document.getElementById('sigStartBtn').style.display = 'none';
+      document.getElementById('sigInputBlock').style.display = 'none'; 
+      document.getElementById('signedBlock').style.display = 'block'; 
+      var sid = d.sigStatus.match(/id=([^&]+)/) ? d.sigStatus.match(/id=([^&]+)/)[1] : d.sigStatus.split("/d/")[1].split("/")[0];
+      document.getElementById('finalSig').innerHTML = '<img src="https://drive.google.com/thumbnail?id=' + sid + '&sz=w600" style="max-width:95%; max-height:95%; object-fit:contain;">'; 
+    }
+    document.getElementById('loading').style.display = 'none'; 
+    document.getElementById('content').style.display = 'block';
+  }
+  
+  function openPad() { 
+    document.getElementById('sigStartBtn').style.display = 'none'; 
+    document.getElementById('sigInputBlock').style.display = 'block';
+    setTimeout(function() { 
+      document.getElementById('sigInputBlock').scrollIntoView({ behavior: 'smooth', block: 'center' }); 
+      initCanvas(); 
+    }, 300);
+  }
+  
+  function hidePad() {
+    document.getElementById('sigInputBlock').style.display = 'none';
+    document.getElementById('sigStartBtn').style.display = 'block';
+    clearCanvas();
+    setTimeout(function() { 
+      document.getElementById('sigStartBtn').scrollIntoView({ behavior: 'smooth', block: 'center' }); 
+    }, 300);
+  }
+  
+  function toggleSigMode() {
+    if (sigMode === 'draw') {
+      sigMode = 'type';
+      document.getElementById('sigB').style.display = 'none';
+      document.getElementById('keyB').style.display = 'block';
+      document.getElementById('modeBtn').innerText = '✍️ 改用手寫簽名';
+      document.getElementById('keyInput').focus();
+    } else {
+      sigMode = 'draw';
+      document.getElementById('keyB').style.display = 'none';
+      document.getElementById('sigB').style.display = 'flex';
+      document.getElementById('modeBtn').innerText = '⌨️ 改用鍵盤輸入';
+      initCanvas();
+    }
+  }
+
+  function clearCanvas() { 
+    var c = document.getElementById('pad');
+    if(c) {
+      c.getContext('2d').clearRect(0,0,2000,2000); 
+      hasDrawn = false; 
+    }
+    document.getElementById('keyInput').value = "";
+  }
+
+  function initCanvas() {
+    var c = document.getElementById('pad'); var ctx = c.getContext('2d'); 
+    c.width = c.offsetWidth;
+    c.height = c.offsetHeight; 
+    ctx.strokeStyle = "#001529"; ctx.lineWidth = 4; ctx.lineCap = "round"; var w = false;
+    function getP(e) { var r = c.getBoundingClientRect(); var t = e.touches ? e.touches[0] : e;
+    return { x: t.clientX - r.left, y: t.clientY - r.top };
+    }
+    function d(e) { 
+      if(!w) return; 
+      e.preventDefault(); 
+      var p = getP(e);
+      ctx.lineTo(p.x, p.y); 
+      ctx.stroke(); 
+      ctx.beginPath(); 
+      ctx.moveTo(p.x, p.y); 
+      hasDrawn = true; 
+    }
+    c.onmousedown = function(e) { w = true; var p = getP(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); };
+    c.onmousemove = d; window.onmouseup = function() { w = false; ctx.beginPath(); };
+    c.ontouchstart = function(e) { e.preventDefault(); w = true; var p = getP(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); };
+    c.ontouchmove = d; c.ontouchend = function() { w = false; ctx.beginPath(); };
+  }
+  
+  function submitSig() {
+    var finalBase64 = "";
+    if (sigMode === 'draw') {
+      if (!hasDrawn) { alertMe("請先在框內手寫簽名，或點擊上方切換為【鍵盤輸入】！", "info"); return; }
+      finalBase64 = document.getElementById('pad').toDataURL("image/png");
+    } else {
+      var textVal = document.getElementById('keyInput').value.trim();
+      if(textVal === "") { alertMe("請輸入您的姓名！", "info"); return; }
+      
+      var tempCanvas = document.createElement('canvas');
+      tempCanvas.width = 600; tempCanvas.height = 200;
+      var tCtx = tempCanvas.getContext('2d');
+      tCtx.fillStyle = "#ffffff"; tCtx.fillRect(0, 0, 600, 200);
+      tCtx.fillStyle = "#001529";
+      tCtx.font = "bold 70px 'Noto Sans TC', sans-serif";
+      tCtx.textAlign = "center"; tCtx.textBaseline = "middle";
+      tCtx.fillText(textVal, 300, 100);
+      finalBase64 = tempCanvas.toDataURL("image/png");
+    }
+
+    var btn = document.getElementById('sendBtn'); btn.innerText = "資料加密上傳中..."; btn.disabled = true;
+
+    fetch(GAS_API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({
+        action: 'submitSignature',
+        sigData: finalBase64,
+        info: {
+          id: quoteId,
+          projectName: document.getElementById('q-j').innerText,
+          customerName: document.getElementById('q-n').innerText
+        }
+      })
+    })
+    .then(function(response) { return response.json(); })
+    .then(function(data) {
+      var res = data.result;
+      if (res === "already_signed") {
+        reloadAfterAlert = true; alertMe("這份報價單剛才已經完成簽署囉！", "info");
+      } else if (res && (res.indexOf("http") !== -1 || res === "成功")) { 
+        document.getElementById('sigInputBlock').style.display = 'none'; 
+        document.getElementById('signedBlock').style.display = 'block'; 
+        document.getElementById('finalSig').innerHTML = '<img src="' + finalBase64 + '" style="max-width:95%; max-height:95%; object-fit:contain;">'; 
+        alertMe("簽署成功！資料已加密存檔。", "success"); 
+      } else {
+        alertMe("發生錯誤：" + res, "error");
+        document.getElementById('sendBtn').innerText = "確認送出簽名"; document.getElementById('sendBtn').disabled = false;
+      }
+    })
+    .catch(function(err) {
+      alertMe("連線送出失敗，請檢查網路後再試一次：" + err, "error");
+      document.getElementById('sendBtn').innerText = "確認送出簽名"; document.getElementById('sendBtn').disabled = false;
+    });
+  }
+</script>
+</body>
+</html>
